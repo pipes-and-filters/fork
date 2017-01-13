@@ -1,0 +1,18 @@
+Main:
+        Chain:
+        - Name: 'grep'
+          Domain: 'bash'
+          Version: '1.0'
+          Command: 'grep'
+          Arguments:
+                  - 'fork'
+Fork:
+        Chain:
+        - Name: 'xargs'
+          Domain: 'bash'
+          Version: '1.0'
+          Command: 'xargs'
+          Arguments:
+                  - '-n'
+                  - '3'
+

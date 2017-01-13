@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"flag"
-	"fmt"
 	"io"
 	"log"
 	"os"
+
+	"github.com/pipes-and-filters/filters"
 )
 
 var (
@@ -16,7 +18,7 @@ func init() {
 	flag.StringVar(
 		&chainsFile,
 		"chains",
-		os.Getenv(fmt.Sprintf("FORK_CHAINSFILE", appu)),
+		os.Getenv("FORK_CHAINSFILE"),
 		"Chains file for forking process.",
 	)
 }
@@ -26,46 +28,42 @@ func main() {
 	if chainsFile == "" {
 		log.Fatal("No chains file specified")
 	}
-	cs, err := filter.ChainsFile(chainsFile)
+	cs, err := filters.ChainsFile(chainsFile)
 	if err != nil {
 		log.Fatal(err)
 	}
-	var main filter.Chain
+	var main filters.Chain
 	main, err = cs.Get("Main")
 	if err != nil {
 		log.Fatal(err)
 	}
-	var main filter.Chain
+	var fork filters.Chain
 	fork, err = cs.Get("Fork")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	maine, err := c.Exec()
+	maine, err := main.Exec()
 	if err != nil {
 		log.Fatal(err)
 	}
-	forke, err := c.Exec()
+	forke, err := fork.Exec()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	mainr, mainw := io.Pipe()
-
-	maine.SetInput(&mainr)
+	var forki bytes.Buffer
+	maini := io.TeeReader(os.Stdin, &forki)
+	maine.SetInput(maini)
 	maine.SetOutput(os.Stdout)
 	err = maine.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	forkr, forkw := io.Pipe()
-
-	forke.SetInput(&forkr)
+	forke.SetInput(&forki)
+	forke.SetOutput(os.Stdout)
 	err = forke.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	io.Copy(io.MultiWriter(mainw, forkw), os.Stdin)
 }
