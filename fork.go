@@ -60,10 +60,13 @@ func main() {
 		log.Fatal(err)
 	}
 	forke.SetInput(&forki)
-	forke.SetOutput(os.Stdout)
-	err = forke.Run()
+	forke.Detach()
+	go forke.Run()
+
+	err = maine.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	wg.Wait()
 
 }
