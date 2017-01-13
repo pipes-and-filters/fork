@@ -18,7 +18,7 @@ func init() {
 	flag.StringVar(
 		&chainsFile,
 		"chains",
-		os.Getenv("FORK_CHAINSFILE"),
+		"",
 		"Chains file for forking process.",
 	)
 }
