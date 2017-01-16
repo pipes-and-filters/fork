@@ -8,6 +8,12 @@ Main:
                   - 'fork'
 Fork:
         Chain:
+        - Name: 'sleep'
+          Domain: 'bash'
+          Version: '1.0'
+          Command: 'sleep'
+          Arguments:
+                  - '2'
         - Name: 'xargs'
           Domain: 'bash'
           Version: '1.0'

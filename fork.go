@@ -55,18 +55,13 @@ func main() {
 	maini := io.TeeReader(os.Stdin, &forki)
 	maine.SetInput(maini)
 	maine.SetOutput(os.Stdout)
-	err = maine.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
+	forke.SetOutput(os.Stdout)
 	forke.SetInput(&forki)
 	forke.Detach()
 	go forke.Run()
-
 	err = maine.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
-	wg.Wait()
 
 }
